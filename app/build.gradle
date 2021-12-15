@@ -58,6 +58,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.3'
+    implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
     implementation "androidx.navigation:navigation-compose:2.4.0-beta02"
     debugImplementation 'org.kodein.db:kodein-db-android-debug:0.9.0-beta'
     releaseImplementation 'org.kodein.db:kodein-db:0.9.0-beta'
