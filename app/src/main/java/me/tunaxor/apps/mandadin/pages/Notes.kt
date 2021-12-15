@@ -20,7 +20,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.ui.Alignment
 
-
+/**
+ * Not the cleanest impl of a view model but at least it does the job for now
+ * I need to brush up a little bit on how to propperly use these
+ */
 class NotesPageVm : ViewModel() {
     val notes = mutableStateListOf<Note>()
 
@@ -47,9 +50,7 @@ class NotesPageVm : ViewModel() {
 }
 
 @Composable
-private fun NoteForm(
-    onSubmit: (String) -> Unit
-) {
+private fun NoteForm(onSubmit: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
     Column {
         Text("Add a new Note")
@@ -57,9 +58,7 @@ private fun NoteForm(
             TextField(
                 text,
                 onValueChange = { text = it },
-                placeholder = {
-                    Text("Type your note")
-                })
+                placeholder = { Text("Type your note") })
             Button(onClick = {
                 onSubmit(text)
                 text = ""
@@ -74,8 +73,9 @@ private fun NoteForm(
 private fun NoteRow(note: Note, onDelete: (UUID) -> Unit) {
     Row(horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = note.content, fontSize = 14.sp, modifier = Modifier.padding(2.dp))
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Button(onClick = { onDelete(note.uid) }) {
+            Text(text = "Borrar", fontSize = 12.sp)
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Icon(
                 Icons.Rounded.Delete,
                 contentDescription = "Delete"
