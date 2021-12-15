@@ -19,6 +19,11 @@ import org.kodein.memory.util.UUID
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import me.tunaxor.apps.mandadin.Store
+import java.util.concurrent.TimeUnit
 
 /**
  * Not the cleanest impl of a view model but at least it does the job for now
@@ -35,6 +40,10 @@ class NotesPageVm : ViewModel() {
         Notesdb.save(Note(UUID.randomUUID(), content))
     }
 
+    fun saveNote(note: Note) {
+        Notesdb.save(note)
+    }
+
     fun fetchNotes() {
         notes.clear()
         notes.addAll(Notesdb.find())
@@ -49,6 +58,7 @@ class NotesPageVm : ViewModel() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun NoteForm(onSubmit: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
@@ -58,7 +68,18 @@ private fun NoteForm(onSubmit: (String) -> Unit) {
             TextField(
                 text,
                 onValueChange = { text = it },
-                placeholder = { Text("Type your note") })
+                placeholder = { Text("Type your note") },
+                modifier = Modifier.onPreviewKeyEvent {
+                    when {
+                        (it.isCtrlPressed && it.key == Key.Enter) ->{
+                            onSubmit(text)
+                            text = ""
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            )
             Button(onClick = {
                 onSubmit(text)
                 text = ""
@@ -69,10 +90,28 @@ private fun NoteForm(onSubmit: (String) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun NoteRow(note: Note, onDelete: (UUID) -> Unit) {
+private fun NoteRow(note: Note, onUpdate: (Note) -> Unit, onDelete: (UUID) -> Unit) {
+    var content by remember { mutableStateOf(note.content) }
     Row(horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = note.content, fontSize = 14.sp, modifier = Modifier.padding(2.dp))
+        TextField(
+            content,
+            onValueChange = {
+                content = it;
+                onUpdate(note.copy(content = it))
+            },
+            placeholder = { Text("Type your note") },
+            modifier = Modifier.onPreviewKeyEvent {
+                when {
+                    (it.isCtrlPressed && it.key == Key.Enter) ->{
+                        onUpdate(note.copy(content = content))
+                        true
+                    }
+                    else -> false
+                }
+            }
+        )
         Button(onClick = { onDelete(note.uid) }) {
             Text(text = "Borrar", fontSize = 12.sp)
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -104,11 +143,16 @@ fun NotesPage(vm: NotesPageVm = NotesPageVm()) {
             vm.fetchNotes()
         })
         LazyColumn {
-            items(vm.notes) {
-                NoteRow(it, onDelete = {
-                    vm.deleteNote(it)
-                    vm.fetchNotes()
-                })
+            items(vm.notes, key = { it.uid.toString() }) {
+                NoteRow(
+                    it,
+                    onUpdate = {
+                        vm.saveNote(it)
+                    },
+                    onDelete = {
+                        vm.deleteNote(it)
+                        vm.fetchNotes()
+                    })
             }
         }
     }
