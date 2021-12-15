@@ -1,6 +1,5 @@
 package me.tunaxor.apps.mandadin
 
-import android.os.Environment
 import org.kodein.db.*
 import org.kodein.db.impl.open
 import org.kodein.db.orm.kotlinx.KotlinxSerializer
