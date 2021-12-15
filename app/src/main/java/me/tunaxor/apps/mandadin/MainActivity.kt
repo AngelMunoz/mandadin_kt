@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "notes") {
                         composable("notes") { NotesPage() }
+                        // TODO: 12/14/21 Add The Category and Category Details pages 
                     }
                 }
             }
