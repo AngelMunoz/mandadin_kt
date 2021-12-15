@@ -2,7 +2,7 @@ package me.tunaxor.apps.mandadin.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Brown200 = Color(0xFFBCAAA4)
+val Brown500 = Color(0xFF795548)
+val Brown700 = Color(0xFF5D4037)
+val Teal200 = Color(0xFF80DEEA)
